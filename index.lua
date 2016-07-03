@@ -7,6 +7,9 @@ local stableUrl = "http://astronautlevel2.github.io/Luma3DS/release.zip"
 local hourlyDevUrl = "http://astronautlevel2.github.io/Luma3DSDev/latest.zip"
 local stableDevUrl = "http://astronautlevel2.github.io/Luma3DSDev/release.zip"
 local payload_path = "/arm9loaderhax.bin"
+if ((not System.doesFileExist(payload_path)) and System.doesFileExist("/arm9loaderhax_si.bin")) then
+	payload_path = "/arm9loaderhax_si.bin"
+end
 local zip_path = "/Luma3DS.zip"
 local backup_path = payload_path..".bak"
 local remoteVer = "http://astronautlevel2.github.io/Luma3DS/lastVer"
@@ -248,6 +251,9 @@ main()
 while true do
         pad = Controls.read()
         
+        if Controls.check(pad.KEY_START) and not Controls.check(oldpad,KEY_START) then
+        	System.exit()
+        end	
             
         if Controls.check(pad,KEY_DDOWN) and not Controls.check(oldpad,KEY_DDOWN) then
             if (curPos < 110) then
