@@ -28,7 +28,7 @@ local pad = Controls.read()
 local oldpad = pad
 
 --CIA/3DSX
-local iscia = 1
+local iscia = 0
 
 --Version Info
 local sver = "1.4.0"
@@ -256,7 +256,7 @@ function main()
         Screen.debugPrint(5, 175, "Install directory: "..payload_path, white, TOP_SCREEN)
     end
     Screen.debugPrint(5, 195, "Installed Updater: v."..sver, white, TOP_SCREEN)
-    Screen.debugPrint(5, 210, "Latest Updater   : b."..lver, white, TOP_SCREEN)
+    Screen.debugPrint(5, 210, "Latest Updater   : v."..lver, white, TOP_SCREEN)
     Screen.flip()
 end
 
@@ -265,7 +265,7 @@ main()
 while true do
         pad = Controls.read()
         
-        if Controls.check(pad.KEY_START) and not Controls.check(oldpad,KEY_START) then
+        if Controls.check(pad,KEY_START) and not Controls.check(oldpad,KEY_START) then
         	System.exit()
         end	
             
@@ -314,7 +314,7 @@ while true do
                 	System.deleteFile("/Updater.CIA")
                 	System.exit()
                 else
-                	Screen.(TOP_SCREEN)
+                	Screen.clear(TOP_SCREEN)
                 	Screen.debugPrint(5, 5, "Downloading new 3DSX...", yellow, TOP_SCREEN)
                 	Network.downloadFile(latestHBX, "/StarUpdater.zip")
                 	Screen.debugPrint(5,35, "Extacting new files...", yellow, TOP_SCREEN)
