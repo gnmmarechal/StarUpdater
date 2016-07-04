@@ -99,9 +99,9 @@ end
 function getMode(mode)
     if mode == menuhaxmode then
         if (isMenuhax) then
-            return "Menuhax"
+            return "MenuHax"
         else
-            return "a9lh"
+            return "Arm9LoaderHax"
         end
     else
         if (isDev) then
