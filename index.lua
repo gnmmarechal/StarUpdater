@@ -317,11 +317,21 @@ while true do
                 	Screen.clear(TOP_SCREEN)
                 	Screen.debugPrint(5, 5, "Downloading new 3DSX...", yellow, TOP_SCREEN)
                 	Network.downloadFile(latestHBX, "/StarUpdater.zip")
-                	Screen.debugPrint(5,35, "Extacting new files...", yellow, TOP_SCREEN)
-                	System.deleteFile("/3ds/StarUpdater/StarUpdater.smdh")
-                	System.deleteFile("/3ds/StarUpdater/index.lua")
-                	System.deleteFile("/3ds/StarUpdater/StarUpdater.3dsx")
-                	System.extractZIP("/StarUpdater.zip","/")
+                	Screen.debugPrint(5,20, "Extacting new files...", yellow, TOP_SCREEN)
+					System.createDirectory("/3ds/StarUpdater/temp")
+                	System.extractZIP("/StarUpdater.zip","/temp")
+					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/index.lua") then
+						System.deleteFile("/3ds/StarUpdater/index.lua")
+						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/index.lua", "/3ds/StarUpdater/index.lua")
+					end					
+					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.smdh") then
+						System.deleteFile("/3ds/StarUpdater/StarUpdater.smdh")
+						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.smdh", "/3ds/StarUpdater/StarUpdater.smdh")
+					end
+					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.3dsx") then
+						System.deleteFile("/3ds/StarUpdater/StarUpdater.3dsx")
+						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.3dsx", "/3ds/StarUpdater/StarUpdater.3dsx")
+					end
                 	System.deletefile("/StarUpdater.zip")
                 	System.exit()
             	end	
