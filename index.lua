@@ -6,17 +6,14 @@ local hourlyUrl = "http://astronautlevel2.github.io/Luma3DS/latest.zip"
 local stableUrl = "http://astronautlevel2.github.io/Luma3DS/release.zip"
 local hourlyDevUrl = "http://astronautlevel2.github.io/Luma3DSDev/latest.zip"
 local stableDevUrl = "http://astronautlevel2.github.io/Luma3DSDev/release.zip"
-local payload_path = "/arm9loaderhax_si.bin"
-if System.doesFileExist("/arm9loaderhax.bin") then
-	payload_path = "/arm9loaderhax.bin"
-end
+local payload_path = "/arm9loaderhax.bin"
 local zip_path = "/Luma3DS.zip"
 local backup_path = payload_path..".bak"
 local remoteVer = "http://astronautlevel2.github.io/Luma3DS/lastVer"
 local remoteCommit = "http://astronautlevel2.github.io/Luma3DS/lastCommit"
 local remoteDevCommit = "http://astronautlevel2.github.io/Luma3DSDev/lastCommit"
 local latestCIA = "http://www.ataber.pw/u"
-local latestHBX = "http://gs2012.xyz/3ds/starupdater/latest.zip" -- I'll be hosting it for now, I suppose.
+local latestHBX = "http://gs2012.xyz/3ds/starupdater/index.lua" -- I'll be hosting it for now, I suppose.
 local curPos = 20
 local isMenuhax = false
 local isDev = false
@@ -50,7 +47,11 @@ function readConfig(fileName)
         payload_path = string.gsub(payload_path, "\r", "")
         backup_path = payload_path..".bak"
     elseif (not System.doesFileExist(fileName) and not isMenuhax) then
-        payload_path = "/arm9loaderhax.bin"
+		if System.doesFileExist("/arm9loaderhax_si.bin") and (not System.doesFileExist("/arm9loaderhax.bin")) then
+			payload_path = "/arm9loaderhax_si.bin"
+		else
+			payload_path = "/arm9loaderhax.bin"
+		end
         backup_path = payload_path..".bak"
         return
     end
@@ -315,24 +316,9 @@ while true do
                 	System.exit()
                 else
                 	Screen.clear(TOP_SCREEN)
-                	Screen.debugPrint(5, 5, "Downloading new 3DSX...", yellow, TOP_SCREEN)
-                	Network.downloadFile(latestHBX, "/StarUpdater.zip")
-                	Screen.debugPrint(5,20, "Extacting new files...", yellow, TOP_SCREEN)
-					System.createDirectory("/3ds/StarUpdater/temp")
-                	System.extractZIP("/StarUpdater.zip","/temp")
-					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/index.lua") then
-						System.deleteFile("/3ds/StarUpdater/index.lua")
-						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/index.lua", "/3ds/StarUpdater/index.lua")
-					end					
-					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.smdh") then
-						System.deleteFile("/3ds/StarUpdater/StarUpdater.smdh")
-						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.smdh", "/3ds/StarUpdater/StarUpdater.smdh")
-					end
-					if System.doesFileExist("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.3dsx") then
-						System.deleteFile("/3ds/StarUpdater/StarUpdater.3dsx")
-						System.renameFile("/3ds/StarUpdater/temp/3ds/StarUpdater/StarUpdater.3dsx", "/3ds/StarUpdater/StarUpdater.3dsx")
-					end
-                	System.deletefile("/StarUpdater.zip")
+                	Screen.debugPrint(5, 5, "Downloading new script...", yellow, TOP_SCREEN)
+					System.deleteFile("/3ds/StarUpdater/index.lua")
+                	Network.downloadFile(latestHBX, "/3ds/StarUpdater/index.lua")
                 	System.exit()
             	end	
 
