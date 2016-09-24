@@ -229,6 +229,10 @@ function update(site)
         elseif (isMenuhax == true) then
             Screen.debugPrint(5,50, "Moving to payload location...", colors.yellow, TOP_SCREEN)
             System.extractFromZIP(zip_path, "out/Luma3DS.dat", "/Luma3DS.dat")
+            if System.doesFileExist("/arm9loaderhax.bin") then
+		System.deleteFile("/arm9loaderhax.bin")		
+            end
+            System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
             System.deleteFile(zip_path)
         end
         Screen.debugPrint(5,80, "Done!", colors.green, TOP_SCREEN)
