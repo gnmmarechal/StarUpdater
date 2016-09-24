@@ -31,7 +31,7 @@ local verserver = "http://www.ataber.pw/ver" -- Unofficial URL http://gs2012.xyz
 local svrelverserver = "http://gs2012.xyz/3ds/starupdater/relver" -- Astronaut must replace this with their own URL, as done above
 
 -- Version Info
-local sver = "1.5.0"
+local sver = "1.5.1"
 local lver = "???" --This is fetched from the server
 local relver = 1 -- This is a number that is checked against the server version for mandatory updates. if svrelver > relver, StarUpdater will auto-update.
 local svrelver = 0 -- Fetched from server
@@ -273,7 +273,6 @@ function main()
     Screen.debugPrint(30,20, "Update to latest Luma3DS", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,35, "Update to Luma3DS hourly", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,50, "Restore a Luma3DS backup", colors.white, TOP_SCREEN)
-    Screen.debugPrint(30,65, "Luma Version: "..getMode(devmode), colors.white, TOP_SCREEN)
     Screen.debugPrint(30,65, "Install mode: "..getMode(menuhaxmode), colors.white, TOP_SCREEN)
     Screen.debugPrint(30,80, "Go back to HBL/Home menu", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,95, "Update the updater", colors.white, TOP_SCREEN)
