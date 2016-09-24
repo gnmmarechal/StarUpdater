@@ -39,7 +39,6 @@ local svrelver = 0 -- Fetched from server
 
 local curPos = 20
 local isMenuhax = false
-local menuhaxmode, devmode = 1,2
 local localVer = ""
 local remoteVerNum = ""
 
@@ -130,15 +129,11 @@ function sleep(n)
   while Timer.getTime(timer) - t0 <= n do end
 end
 
-function getMode(mode)
-    if mode == menuhaxmode then
-        if (isMenuhax) then
-            return "MenuHax"
-        else
-            return "Arm9LoaderHax"
-        end
-    else
-	return "Regular"
+function getMode()
+	if (isMenuhax) then
+		return "MenuHax"
+	else
+		return "Arm9LoaderHax"
     end
 end
 
@@ -277,7 +272,7 @@ function main()
     Screen.debugPrint(30,20, "Update to latest Luma3DS", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,35, "Update to Luma3DS hourly", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,50, "Restore a Luma3DS backup", colors.white, TOP_SCREEN)
-    Screen.debugPrint(30,65, "Install mode: "..getMode(menuhaxmode), colors.white, TOP_SCREEN)
+    Screen.debugPrint(30,65, "Install mode: "..getMode(), colors.white, TOP_SCREEN)
     Screen.debugPrint(30,80, "Go back to HBL/Home menu", colors.white, TOP_SCREEN)
     Screen.debugPrint(30,95, "Update the updater", colors.white, TOP_SCREEN)
     Screen.debugPrint(5,130, "Your Luma3DS version  : "..localVer, colors.white, TOP_SCREEN)
