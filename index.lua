@@ -39,7 +39,7 @@ local svrelver = 0 -- Fetched from server
 
 local curPos = 20
 local isMenuhax = 1
--- isMenuHax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx)
+-- isMenuhax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx)
 
 local localVer = ""
 local remoteVerNum = ""
@@ -358,6 +358,11 @@ while true do
 					restoreBackup()
 				elseif (curPos == 65) then
 					isMenuhax = not isMenuhax
+					if isMenuhax <= 2 then
+						isMenuhax = isMenuhax + 1
+					else
+						isMenuhax = 0
+					end
 					init()
 					main()
 				elseif (curPos == 80) then
