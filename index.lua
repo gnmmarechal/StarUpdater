@@ -38,7 +38,9 @@ local svrelver = 0 -- Fetched from server
 
 
 local curPos = 20
-local isMenuhax = false
+local isMenuhax = 1
+-- isMenuHax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx)
+
 local localVer = ""
 local remoteVerNum = ""
 
@@ -68,8 +70,8 @@ end
 --End of Auto-Update check
 
 function readConfig(fileName)
-    if (isMenuhax) then
-        payload_path = "/Luma3DS.dat"
+    if (not isMenuhax == 0) then
+        payload_path = "/arm9loaderhax.bin"
         backup_path = payload_path..".bak"
         return
     end
@@ -79,7 +81,7 @@ function readConfig(fileName)
         payload_path = string.gsub(payload_path, "\n", "")
         payload_path = string.gsub(payload_path, "\r", "")
         backup_path = payload_path..".bak"
-    elseif (not System.doesFileExist(fileName) and not isMenuhax) then
+    elseif (not System.doesFileExist(fileName) and (isMenuhax == 0)) then
 		if System.doesFileExist("/arm9loaderhax_si.bin") and (not System.doesFileExist("/arm9loaderhax.bin")) then
 			payload_path = "/arm9loaderhax_si.bin"
 		else
@@ -130,7 +132,7 @@ function sleep(n)
 end
 
 function getMode()
-	if (isMenuhax) then
+	if (not isMenuhax == 0) then
 		return "MenuHax"
 	else
 		return "Arm9LoaderHax"
@@ -215,13 +217,13 @@ function update(site)
         if (System.doesFileExist(payload_path)) then
             System.renameFile(payload_path, backup_path)
         end
-        if (isMenuhax == false) then
+        if (isMenuhax == 0) then
             System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", payload_path)
             Screen.debugPrint(5,50, "Moving to payload location...", colors.yellow, TOP_SCREEN)
             System.deleteFile(zip_path)
             Screen.debugPrint(5,65, "Changing path for reboot patch", colors.yellow, TOP_SCREEN)
             path_changer()
-        elseif (isMenuhax == true) then
+        elseif (isMenuhax == 1) then
             System.createDirectory("/3ds")
 			System.createDirectory("/3ds/Luma3DS")
 			Screen.debugPrint(5,50, "Extracting 3DSX/SMDH...", colors.yellow, TOP_SCREEN)
@@ -247,9 +249,25 @@ function update(site)
             end
             System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
             System.deleteFile(zip_path)
+		elseif (isMenuhax == 2) then
+			Screen.debugPrint(5,50, "Extracting boot.3dsx...", colors.yellow, TOP_SCREEN)
+			if System.doesFileExist("/boot2su.3dsx") then
+				System.deleteFile("/boot2su.3dsx")
+			end
+            System.extractFromZIP(zip_path, "out/menuhax/boot.3dsx", "/boot2su.3dsx")
+			if System.doesFileExist("/boot.3dsx") then
+				System.deleteFile("/boot.3dsx")
+			end
+			System.renameFile("/boot2su.3dsx", "/boot.3dsx")
+			Screen.debugPrint(5, 65, "Extracting payload...", colors.yellow, TOP_SCREEN)
+            if System.doesFileExist("/arm9loaderhax.bin") then
+				System.deleteFile("/arm9loaderhax.bin")	
+            end
+            System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
+            System.deleteFile(zip_path)		
         end
         Screen.debugPrint(5,80, "Done!", colors.green, TOP_SCREEN)
-        Screen.debugPrint(5,95, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
+        Screen.debugPrint(5,95, "Press START to go back to HBL/Home Menu", colors.green, TOP_SCREEN)
         Screen.debugPrint(5,110, "Press SELECT to reboot", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
@@ -264,7 +282,7 @@ function update(site)
 
     else
         Screen.debugPrint(5,5, "WiFi is off! Please turn it on and retry!", colors.red, TOP_SCREEN)
-        Screen.debugPrint(5,20, "Press START to go back to HBL/Home menu", colors.red, TOP_SCREEN)
+        Screen.debugPrint(5,20, "Press START to go back to HBL/Home Menu", colors.red, TOP_SCREEN)
         while true do
             pad = Controls.read()
             if Controls.check(pad,KEY_START) then
@@ -295,8 +313,12 @@ function main()
     Screen.debugPrint(30,95, "Update the updater", colors.white, TOP_SCREEN)
     Screen.debugPrint(5,130, "Your Luma3DS version  : "..localVer, colors.white, TOP_SCREEN)
     Screen.debugPrint(5,145, "Latest Luma3DS version: "..remoteVerNum, colors.white, TOP_SCREEN)
-    if (not isMenuhax) then
+    if (isMenuhax == 0) then
         Screen.debugPrint(5, 160, "Install path: "..payload_path, colors.white, TOP_SCREEN)
+	elseif (isMenuhax == 1) then
+		Screen.debugPrint(5, 160, "Install path: /3ds/Luma3DS", colors.white, TOP_SCREEN)
+	elseif (isMenuhax == 2) then
+		Screen.debugPrint(5, 160, "Install path: /boot.3dsx", colors.white, TOP_SCREEN)
     end
     Screen.debugPrint(5, 195, "Installed Updater: v."..sver, colors.white, TOP_SCREEN)
     Screen.debugPrint(5, 210, "Latest Updater   : v."..lver, colors.white, TOP_SCREEN)
@@ -317,11 +339,15 @@ while true do
 				if (curPos < 95) then
 					curPos = curPos + 15
 					main()
+				else
+					curPos = 20
 				end
 			elseif Controls.check(pad,KEY_DUP) and not Controls.check(oldpad,KEY_DUP) then
 				if (curPos > 20) then
 					curPos = curPos - 15
 					main()
+				else
+					curPos = 95
 				end
 			elseif Controls.check(pad,KEY_A) and not Controls.check(oldpad,KEY_A) then
 				if (curPos == 20) then
