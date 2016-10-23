@@ -1,5 +1,12 @@
 -- StarUpdater
 
+local basecfg = {
+	maindir = "/StarUpdater"
+}
+-- Create required directories
+System.createDirectory(basecfg.maindir)
+System.createDirectory(basecfg.maindir.."/res")
+
 -- Colours
 local colors =
 {
@@ -20,9 +27,11 @@ local url =
 }
 
 -- Additional Paths
-local payload_path = "/arm9loaderhax.bin"
-local zip_path = "/Luma3DS.zip"
-local backup_path = payload_path..".bak"
+local path = {
+	payload = "/arm9loaderhax.bin",
+	zip = basecfg.maindir.."/res/Luma3DS.zip",
+	backup = path.payload..".bak"
+}
 
 -- StarUpdater URLs
 local latestCIA = "http://www.ataber.pw/u" -- Unofficial URL is: http://gs2012.xyz/3ds/starupdater/latest.zep
@@ -71,23 +80,23 @@ end
 
 function readConfig(fileName)
     if (not isMenuhax == 0) then
-        payload_path = "/arm9loaderhax.bin"
-        backup_path = payload_path..".bak"
+        path.payload = "/arm9loaderhax.bin"
+        path.backup = path.payload..".bak"
         return
     end
     if (System.doesFileExist(fileName)) then
         local file = io.open(fileName, FREAD)
-        payload_path = io.read(file, 0, io.size(file))
-        payload_path = string.gsub(payload_path, "\n", "")
-        payload_path = string.gsub(payload_path, "\r", "")
-        backup_path = payload_path..".bak"
+        path.payload = io.read(file, 0, io.size(file))
+        path.payload = string.gsub(payload_path, "\n", "")
+        path.payload = string.gsub(payload_path, "\r", "")
+        path.backup = path.payload..".bak"
     elseif (not System.doesFileExist(fileName) and (isMenuhax == 0)) then
 		if System.doesFileExist("/arm9loaderhax_si.bin") and (not System.doesFileExist("/arm9loaderhax.bin")) then
-			payload_path = "/arm9loaderhax_si.bin"
+			path.payload = "/arm9loaderhax_si.bin"
 		else
-			payload_path = "/arm9loaderhax.bin"
+			path.payload = "/arm9loaderhax.bin"
 		end
-        backup_path = payload_path..".bak"
+        path.backup = path.payload..".bak"
         return
     end
 end
@@ -97,11 +106,11 @@ function restoreBackup()
     Screen.clear(TOP_SCREEN)
     Screen.waitVblankStart()
     Screen.flip()
-    if System.doesFileExist(backup_path) then
+    if System.doesFileExist(path.backup) then
         Screen.debugPrint(5,5, "Deleting new payload...", colors.yellow, TOP_SCREEN)
-        System.deleteFile(payload_path)
+        System.deleteFile(path.payload)
         Screen.debugPrint(5,20, "Renaming backup to "..payload_path.."...", colors.yellow, TOP_SCREEN)
-        System.renameFile(backup_path, payload_path)
+        System.renameFile(path.backup, path.payload)
         Screen.debugPrint(5,35, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
@@ -112,7 +121,7 @@ function restoreBackup()
             end
         end
     else
-        Screen.debugPrint(5,5, "Backup path: "..backup_path, colors.yellow, TOP_SCREEN)
+        Screen.debugPrint(5,5, "Backup path: "..path.backup, colors.yellow, TOP_SCREEN)
         Screen.debugPrint(5,20, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
@@ -186,16 +195,16 @@ function getVer(path)
 end
 
 function path_changer()
-    local file = io.open(payload_path, FREAD)
+    local file = io.open(path.payload, FREAD)
     local a9lh_data = io.read(file, 0, io.size(file))
     io.close(file)
     local offset = string.find(a9lh_data, "%"..unicodify("arm9loaderhax.bin"))
-    local new_path = unicodify(string.sub(payload_path,2,-1))
+    local new_path = unicodify(string.sub(path.payload,2,-1))
     if #new_path < 74 then
         for i = 1,74-#new_path,1 do
             new_path = new_path..string.char(00)
         end
-        local file = io.open(payload_path, FWRITE)
+        local file = io.open(path.payload, FWRITE)
         io.write(file, offset-1, new_path, 74)
         io.close(file)
     end
@@ -208,19 +217,19 @@ function update(site)
     Screen.flip()
     if Network.isWifiEnabled() then
     	Screen.debugPrint(5,5, "Downloading file...", colors.yellow, TOP_SCREEN)
-        Network.downloadFile(site, zip_path)
+        Network.downloadFile(site, path.zip)
         Screen.debugPrint(5,15, "File downloaded!", colors.green, TOP_SCREEN)
         Screen.debugPrint(5,35, "Backing up payload", colors.yellow, TOP_SCREEN)
-        if (System.doesFileExist(backup_path)) then
-            System.deleteFile(backup_path)
+        if (System.doesFileExist(path.backup)) then
+            System.deleteFile(path.backup)
         end
-        if (System.doesFileExist(payload_path)) then
-            System.renameFile(payload_path, backup_path)
+        if (System.doesFileExist(path.payload)) then
+            System.renameFile(path.payload, path.backup)
         end
         if (isMenuhax == 0) then
-            System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", payload_path)
+            System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", path.payload)
             Screen.debugPrint(5,50, "Moving to payload location...", colors.yellow, TOP_SCREEN)
-            System.deleteFile(zip_path)
+            System.deleteFile(path.zip)
             Screen.debugPrint(5,65, "Changing path for reboot patch", colors.yellow, TOP_SCREEN)
             path_changer()
         elseif (isMenuhax == 1) then
@@ -233,12 +242,12 @@ function update(site)
 			if System.doesFileExist("/3ds/Luma3DS/luma-up.smdh") then
 				System.deleteFile("/3ds/Luma3DS/luma-up.smdh")
 			end
-            System.extractFromZIP(zip_path, "out/hax/3ds/Luma3DS/Luma3DS.3dsx", "/3ds/Luma3DS/luma-up.3dsx")
+            System.extractFromZIP(path.zip, "out/hax/3ds/Luma3DS/Luma3DS.3dsx", "/3ds/Luma3DS/luma-up.3dsx")
 			if System.doesFileExist("/3ds/Luma3DS/Luma3DS.3dsx") then
 				System.deleteFile("/3ds/Luma3DS/Luma3DS.3dsx")
 			end
 			System.renameFile("/3ds/Luma3DS/luma-up.3dsx", "/3ds/Luma3DS/Luma3DS.3dsx")
-            System.extractFromZIP(zip_path, "out/hax/3ds/Luma3DS/Luma3DS.smdh", "/3ds/Luma3DS/luma-up.smdh")			
+            System.extractFromZIP(path.zip, "out/hax/3ds/Luma3DS/Luma3DS.smdh", "/3ds/Luma3DS/luma-up.smdh")			
 			if System.doesFileExist("/3ds/Luma3DS/Luma3DS.smdh") then
 				System.deleteFile("/3ds/Luma3DS/Luma3DS.smdh")
 			end
@@ -247,14 +256,14 @@ function update(site)
             if System.doesFileExist("/arm9loaderhax.bin") then
 				System.deleteFile("/arm9loaderhax.bin")	
             end
-            System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
-            System.deleteFile(zip_path)
+            System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
+            System.deleteFile(path.zip)
 		elseif (isMenuhax == 2) then
 			Screen.debugPrint(5,50, "Extracting boot.3dsx...", colors.yellow, TOP_SCREEN)
 			if System.doesFileExist("/boot2su.3dsx") then
 				System.deleteFile("/boot2su.3dsx")
 			end
-            System.extractFromZIP(zip_path, "out/menuhax/boot.3dsx", "/boot2su.3dsx")
+            System.extractFromZIP(path.zip, "out/menuhax/boot.3dsx", "/boot2su.3dsx")
 			if System.doesFileExist("/boot.3dsx") then
 				System.deleteFile("/boot.3dsx")
 			end
@@ -263,8 +272,8 @@ function update(site)
             if System.doesFileExist("/arm9loaderhax.bin") then
 				System.deleteFile("/arm9loaderhax.bin")	
             end
-            System.extractFromZIP(zip_path, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
-            System.deleteFile(zip_path)		
+            System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
+            System.deleteFile(path.zip)		
         end
         Screen.debugPrint(5,80, "Done!", colors.green, TOP_SCREEN)
         Screen.debugPrint(5,95, "Press START to go back to HBL/Home Menu", colors.green, TOP_SCREEN)
@@ -296,7 +305,7 @@ end
 
 function init()
 	readConfig("/luma/update.cfg")
-	localVer = getVer(payload_path)
+	localVer = getVer(path.payload)
 	remoteVerNum = getVer("remote")
 end
 
@@ -314,7 +323,7 @@ function main()
     Screen.debugPrint(5,130, "Your Luma3DS version  : "..localVer, colors.white, TOP_SCREEN)
     Screen.debugPrint(5,145, "Latest Luma3DS version: "..remoteVerNum, colors.white, TOP_SCREEN)
     if (isMenuhax == 0) then
-        Screen.debugPrint(5, 160, "Install path: "..payload_path, colors.white, TOP_SCREEN)
+        Screen.debugPrint(5, 160, "Install path: "..path.payload, colors.white, TOP_SCREEN)
 	elseif (isMenuhax == 1) then
 		Screen.debugPrint(5, 160, "Install path: /3ds/Luma3DS", colors.white, TOP_SCREEN)
 	elseif (isMenuhax == 2) then
