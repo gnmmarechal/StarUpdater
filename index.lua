@@ -365,7 +365,6 @@ while true do
 				elseif (curPos == 50) then
 					restoreBackup()
 				elseif (curPos == 65) then
-					isMenuhax = not isMenuhax
 					if isMenuhax <= 2 then
 						isMenuhax = isMenuhax + 1
 					else
