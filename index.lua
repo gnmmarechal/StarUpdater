@@ -30,9 +30,8 @@ local url =
 local path = {
 	payload = "/arm9loaderhax.bin",
 	zip = basecfg.maindir.."/res/Luma3DS.zip",
-	backup = path.payload..".bak"
 }
-
+	backup_path = path.payload..".bak"
 -- StarUpdater URLs
 local latestCIA = "http://www.ataber.pw/u" -- Unofficial URL is: http://gs2012.xyz/3ds/starupdater/latest.zep
 local latestHB = "http://gs2012.xyz/3ds/starupdater/lateststarupdater.3dsx" -- Astronaut must replace this with their own URL, as done for other URLs.
@@ -81,7 +80,7 @@ end
 function readConfig(fileName)
     if (not isMenuhax == 0) then
         path.payload = "/arm9loaderhax.bin"
-        path.backup = path.payload..".bak"
+        backup_path = path.payload..".bak"
         return
     end
     if (System.doesFileExist(fileName)) then
@@ -89,14 +88,14 @@ function readConfig(fileName)
         path.payload = io.read(file, 0, io.size(file))
         path.payload = string.gsub(payload_path, "\n", "")
         path.payload = string.gsub(payload_path, "\r", "")
-        path.backup = path.payload..".bak"
+        backup_path = path.payload..".bak"
     elseif (not System.doesFileExist(fileName) and (isMenuhax == 0)) then
 		if System.doesFileExist("/arm9loaderhax_si.bin") and (not System.doesFileExist("/arm9loaderhax.bin")) then
 			path.payload = "/arm9loaderhax_si.bin"
 		else
 			path.payload = "/arm9loaderhax.bin"
 		end
-        path.backup = path.payload..".bak"
+        backup_path = path.payload..".bak"
         return
     end
 end
@@ -106,11 +105,11 @@ function restoreBackup()
     Screen.clear(TOP_SCREEN)
     Screen.waitVblankStart()
     Screen.flip()
-    if System.doesFileExist(path.backup) then
+    if System.doesFileExist(backup_path) then
         Screen.debugPrint(5,5, "Deleting new payload...", colors.yellow, TOP_SCREEN)
         System.deleteFile(path.payload)
         Screen.debugPrint(5,20, "Renaming backup to "..payload_path.."...", colors.yellow, TOP_SCREEN)
-        System.renameFile(path.backup, path.payload)
+        System.renameFile(backup_path, path.payload)
         Screen.debugPrint(5,35, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
@@ -121,7 +120,7 @@ function restoreBackup()
             end
         end
     else
-        Screen.debugPrint(5,5, "Backup path: "..path.backup, colors.yellow, TOP_SCREEN)
+        Screen.debugPrint(5,5, "Backup path: "..backup_path, colors.yellow, TOP_SCREEN)
         Screen.debugPrint(5,20, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
@@ -220,11 +219,11 @@ function update(site)
         Network.downloadFile(site, path.zip)
         Screen.debugPrint(5,15, "File downloaded!", colors.green, TOP_SCREEN)
         Screen.debugPrint(5,35, "Backing up payload", colors.yellow, TOP_SCREEN)
-        if (System.doesFileExist(path.backup)) then
-            System.deleteFile(path.backup)
+        if (System.doesFileExist(backup_path)) then
+            System.deleteFile(backup_path)
         end
         if (System.doesFileExist(path.payload)) then
-            System.renameFile(path.payload, path.backup)
+            System.renameFile(path.payload, backup_path)
         end
         if (isMenuhax == 0) then
             System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", path.payload)
