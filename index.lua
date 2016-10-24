@@ -46,7 +46,7 @@ local svrelver = 0 -- Fetched from server
 
 
 local curPos = 20
-local isMenuhax = 1
+local isMenuhax = 0
 -- isMenuhax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx)
 
 local localVer = ""
@@ -140,10 +140,12 @@ function sleep(n)
 end
 
 function getMode()
-	if (not isMenuhax == 0) then
-		return "MenuHax"
-	else
-		return "Arm9LoaderHax"
+	if isMenuhax == 0 then
+		return "ARM9LoaderHax"
+	elseif isMenuhax == 1 then
+		return "MenuHax (1)"
+	elseif isMenuhax == 2 then
+		return "MenuHax (2)"
     end
 end
 
@@ -365,7 +367,7 @@ while true do
 				elseif (curPos == 50) then
 					restoreBackup()
 				elseif (curPos == 65) then
-					if isMenuhax <= 2 then
+					if isMenuhax < 2 then
 						isMenuhax = isMenuhax + 1
 					else
 						isMenuhax = 0
