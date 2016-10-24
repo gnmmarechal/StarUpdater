@@ -348,14 +348,14 @@ while true do
 					curPos = curPos + 15
 					main()
 				else
-					curPos = 20
+					--curPos = 20
 				end
 			elseif Controls.check(pad,KEY_DUP) and not Controls.check(oldpad,KEY_DUP) then
 				if (curPos > 20) then
 					curPos = curPos - 15
 					main()
 				else
-					curPos = 95
+					--curPos = 95
 				end
 			elseif Controls.check(pad,KEY_A) and not Controls.check(oldpad,KEY_A) then
 				if (curPos == 20) then
