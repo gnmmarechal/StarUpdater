@@ -42,7 +42,7 @@ exit /b
 
 :3dsx-b
 echo Creating SMDH...
-tools\bannertool makesmdh -s "StarUpdater" -l "StarUpdater for Luma3DS" -p "astronautlevel" -i starlogo.png -o StarUpdater.smdh
+tools\bannertool makesmdh -s "StarUpdater-UN" -l "StarUpdater-UN for Luma3DS" -p "astronautlevel/gnmmarechal" -i starlogo.png -o StarUpdater.smdh
 echo Creating target 2 - 3DSX...
 tools\3dsxtool bin/lpp-3ds.elf ../StarUpdater.3dsx --romfs=romfs.bin --smdh=StarUpdater.smdh
 goto :EOF
@@ -51,7 +51,7 @@ goto :EOF
 echo Creating banner from files...
 tools\bannertool makebanner -i banner.png -a luma.wav -o banner.bin
 echo Creating icon from file...
-tools\bannertool makesmdh -s "StarUpdater" -l "StarUpdater for Luma3DS" -p "astronautlevel" -i starlogo.png -o icon.bin
+tools\bannertool makesmdh -s "StarUpdater-UN" -l "StarUpdater-UN for Luma3DS" -p "astronautlevel/gnmmarechal" -i starlogo.png -o icon.bin
 echo Creating target 1 - CIA ...
 tools\makerom -f cia -o ../StarUpdater.cia -elf bin/lpp-3ds.elf -rsf StarUpdater.rsf -icon icon.bin -banner banner.bin -exefslogo -target t -romfs romfs.bin
 goto :EOF

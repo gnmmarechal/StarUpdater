@@ -1,12 +1,12 @@
 BasicInfo:
-  Title                   : "StarUpdater"
+  Title                   : "StarUpdater-UN"
   CompanyCode             : "00"
   ProductCode             : "CFW-U-STUP"
   ContentType             : Application
   Logo                    : Nintendo # Nintendo / Licensed / Distributed / iQue / iQueForSystem
 
 TitleInfo:
-  UniqueId                : 0x9998
+  UniqueId                : 0xA546
   Category                : Application
   
 CardInfo:
