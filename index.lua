@@ -20,10 +20,10 @@ local colors =
 
 local url =
 {
-	hourly = "http://astronautlevel2.github.io/Luma3DS/latest.zip",
-	stable = "http://astronautlevel2.github.io/Luma3DS/release.zip",
-	remver = "http://astronautlevel2.github.io/Luma3DS/lastVer",
-	remcommit = "http://astronautlevel2.github.io/Luma3DS/lastCommit",
+	hourly = "http://mirror.gs2012.xyz/3DS/CFW/Luma3DS-AuReiNand/StarUpdater/luma-nightly.zip",
+	stable = "http://mirror.gs2012.xyz/3DS/CFW/Luma3DS-AuReiNand/StarUpdater/luma-stable.zip",
+	remver = "http://mirror.gs2012.xyz/3DS/CFW/Luma3DS-AuReiNand/StarUpdater/luma-stable-ver",
+	remcommit = "http://mirror.gs2012.xyz/3DS/CFW/Luma3DS-AuReiNand/StarUpdater/luma-commit",
 }
 
 -- Additional Paths
