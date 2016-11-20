@@ -121,7 +121,7 @@ function restoreBackup()
         end
     else
         Screen.debugPrint(5,5, "Backup path: "..backup_path, colors.yellow, TOP_SCREEN)
-        Screen.debugPrint(5,20, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
+        Screen.debugPrint(5,20, "Press START to go back to HBL/Home Menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
             if Controls.check(pad,KEY_START) then
