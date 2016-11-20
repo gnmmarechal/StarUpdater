@@ -39,7 +39,7 @@ local verserver = "http://gs2012.xyz/3ds/starupdater/version" -- Unofficial URL 
 local svrelverserver = "http://gs2012.xyz/3ds/starupdater/relver" -- Astronaut must replace this with their own URL, as done above
 
 -- Version Info
-local sver = "1.5.2-UN"
+local sver = "1.5.3-UN"
 local lver = "???" --This is fetched from the server
 local relver = 1 -- This is a number that is checked against the server version for mandatory updates. if svrelver > relver, StarUpdater will auto-update.
 local svrelver = 0 -- Fetched from server
@@ -86,8 +86,8 @@ function readConfig(fileName)
     if (System.doesFileExist(fileName)) then
         local file = io.open(fileName, FREAD)
         path.payload = io.read(file, 0, io.size(file))
-        path.payload = string.gsub(payload_path, "\n", "")
-        path.payload = string.gsub(payload_path, "\r", "")
+        path.payload = string.gsub(path.payload, "\n", "")
+        path.payload = string.gsub(path.payload, "\r", "")
         backup_path = path.payload..".bak"
     elseif (not System.doesFileExist(fileName) and (isMenuhax == 0)) then
 		if System.doesFileExist("/arm9loaderhax_si.bin") and (not System.doesFileExist("/arm9loaderhax.bin")) then
@@ -108,9 +108,9 @@ function restoreBackup()
     if System.doesFileExist(backup_path) then
         Screen.debugPrint(5,5, "Deleting new payload...", colors.yellow, TOP_SCREEN)
         System.deleteFile(path.payload)
-        Screen.debugPrint(5,20, "Renaming backup to "..payload_path.."...", colors.yellow, TOP_SCREEN)
+        Screen.debugPrint(5,20, "Renaming backup to "..path.payload.."...", colors.yellow, TOP_SCREEN)
         System.renameFile(backup_path, path.payload)
-        Screen.debugPrint(5,35, "Press START to go back to HBL/Home menu", colors.green, TOP_SCREEN)
+        Screen.debugPrint(5,35, "Press START to go back to HBL/Home Menu", colors.green, TOP_SCREEN)
         while true do
             pad = Controls.read()
                 if Controls.check(pad,KEY_START) then
