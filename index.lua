@@ -30,6 +30,8 @@ local url =
 local path = {
 	payload = "/arm9loaderhax.bin",
 	zip = basecfg.maindir.."/res/Luma3DS.zip",
+	lumaPathCfg = "/luma/path.txt",
+	sUPathCfg = "/luma/update.cfg"
 }
 	backup_path = path.payload..".bak"
 -- StarUpdater URLs
@@ -133,6 +135,26 @@ function restoreBackup()
     end
 end
 
+function fileCopy(input, output)
+	local MAX_RAM_ALLOCATION = 10485760
+		inp = io.open(input,FREAD)
+	if System.doesFileExist(output) then
+		System.deleteFile(output)
+	end
+	out = io.open(output,FCREATE)
+	size = io.size(inp)
+	index = 0
+	while (index+(MAX_RAM_ALLOCATION/2) < size) do
+		io.write(out,index,io.read(inp,index,MAX_RAM_ALLOCATION/2),(MAX_RAM_ALLOCATION/2))
+		index = index + (MAX_RAM_ALLOCATION/2)
+	end
+	if index < size then
+		io.write(out,index,io.read(inp,index,size-index),(size-index))
+	end
+	io.close(inp)
+	io.close(out)
+end
+
 function sleep(n)
   local timer = Timer.new()
   local t0 = Timer.getTime(timer)
@@ -211,6 +233,13 @@ function path_changer()
     end
 end
 
+function path_changer_cp()
+	if System.doesFileExist(path.lumaPathCfg) and System.doesFileExist(path.sUPathCfg) then
+		System.deleteFile(path.lumaPathCfg)
+		fileCopy(path.sUPathCfg, path.lumaPathCfg)
+	end
+end
+
 function update(site)
     Screen.refresh()
     Screen.clear(TOP_SCREEN)
@@ -232,7 +261,7 @@ function update(site)
             Screen.debugPrint(5,50, "Moving to payload location...", colors.yellow, TOP_SCREEN)
             System.deleteFile(path.zip)
             Screen.debugPrint(5,65, "Changing path for reboot patch", colors.yellow, TOP_SCREEN)
-            path_changer()
+            path_changer_cp()
         elseif (isMenuhax == 1) then
             System.createDirectory("/3ds")
 			System.createDirectory("/3ds/Luma3DS")
@@ -305,7 +334,7 @@ function update(site)
 end
 
 function init()
-	readConfig("/luma/update.cfg")
+	readConfig(path.sUPathCfg)
 	localVer = getVer(path.payload)
 	remoteVerNum = getVer("remote")
 end
