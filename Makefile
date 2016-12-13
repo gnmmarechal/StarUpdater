@@ -47,7 +47,7 @@ endif
 
 MAKEROM = ./$(TOOLDIR)/makerom
 3DSTOOL = ./$(TOOLDIR)/3dstool
-3DSXTOOL = ./$(TOOLDIR)/3dsxtool
+3DSXTOOL = ./$(TOOLDIR)/../win/3dsxtool.exe
 BANNERTOOL = ./$(TOOLDIR)/bannertool
 
 
@@ -66,7 +66,7 @@ icon:
 	$(BANNERTOOL) makesmdh -s "$(APPNAME)" -l "$(APPDESC)" -p "$(APPAUTHOR)" -i $(LOGOFILE) -o $(ICONFILE)
 
 3dsx2: outdir banner
-	$(3DSXTOOL) $(LPPELF) $(3DSXBIN) --romfs=$(ROMFSFILE) --smdh=$(BANNERFILE)
+	$(3DSXTOOL) $(LPPELF) "$(3DSXBIN)" --romfs="$(ROMFSFILE)" --smdh="$(BANNERFILE)"
 
 banner: outdir
 	$(BANNERTOOL) makesmdh -s "$(APPNAME)" -l "$(APPDESC)" -p "$(APPAUTHOR)" -i $(LOGOFILE) -o $(BANNERFILE)
