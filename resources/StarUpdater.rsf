@@ -3,7 +3,7 @@ BasicInfo:
   CompanyCode             : "00"
   ProductCode             : "CFW-U-STUP"
   ContentType             : Application
-  Logo                    : Nintendo # Nintendo / Licensed / Distributed / iQue / iQueForSystem
+  Logo                    : Homebrew
 
 TitleInfo:
   UniqueId                : !!TITLEID!!
