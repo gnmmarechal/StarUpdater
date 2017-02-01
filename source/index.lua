@@ -1,7 +1,7 @@
 -- StarUpdater
 
 local basecfg = {
-	maindir = "/StarUpdater"
+	maindir = "/3ds/data/StarUpdater"
 }
 -- Create required directories
 System.createDirectory(basecfg.maindir)
