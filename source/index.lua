@@ -49,7 +49,7 @@ local svrelver = 0 -- Fetched from server
 
 local curPos = 20
 local isMenuhax = 0
--- isMenuhax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx)
+-- isMenuhax modes: 0 (A9LH), 1 (MenuHax /3ds/Luma3DS/Luma3DS.3dsx), 2 (MenuHax /boot.3dsx), 3 (Spider/MSET /Luma3DS.dat)
 
 local localVer = ""
 local remoteVerNum = ""
@@ -168,6 +168,8 @@ function getMode()
 		return "MenuHax (1)"
 	elseif isMenuhax == 2 then
 		return "MenuHax (2)"
+    elseif isMenuhax == 3 then
+		return "MSET/Spider"
     end
 end
 
@@ -300,10 +302,23 @@ function update(site)
 			System.renameFile("/boot2su.3dsx", "/boot.3dsx")
 			Screen.debugPrint(5, 65, "Extracting payload...", colors.yellow, TOP_SCREEN)
             if System.doesFileExist("/arm9loaderhax.bin") then
-				System.deleteFile("/arm9loaderhax.bin")	
+				System.deleteFile("/arm9loaderhax.bin")
             end
             System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")			
-            System.deleteFile(path.zip)		
+            System.deleteFile(path.zip)
+        elseif (isMenuhax == 3) then
+			Screen.debugPrint(5,50, "Extracting Luma3DS.dat...", colors.yellow, TOP_SCREEN)
+			if System.doesFileExist("/Luma3DS2.dat") then
+				System.deleteFile("/Luma3DS2.dat")
+			end
+			System.extractFromZIP(path.zip, "out/mset-spider/Luma3DS.dat", "/Luma3DS2.dat")
+			System.renameFile("/Luma3DS2.dat", "/Luma3DS.dat")
+			Screen.debugPrint(5, 65, "Extracting payload...", colors.yellow, TOP_SCREEN)
+            if System.doesFileExist("/arm9loaderhax.bin") then
+				System.deleteFile("/arm9loaderhax.bin")
+            end
+            System.extractFromZIP(path.zip, "out/arm9loaderhax.bin", "/arm9loaderhax.bin")				
+            System.deleteFile(path.zip)
         end
         Screen.debugPrint(5,80, "Done!", colors.green, TOP_SCREEN)
         Screen.debugPrint(5,95, "Press START to go back to HBL/Home Menu", colors.green, TOP_SCREEN)
@@ -358,6 +373,8 @@ function main()
 		Screen.debugPrint(5, 160, "Install path: /3ds/Luma3DS", colors.white, TOP_SCREEN)
 	elseif (isMenuhax == 2) then
 		Screen.debugPrint(5, 160, "Install path: /boot.3dsx", colors.white, TOP_SCREEN)
+	elseif (isMenuhax == 3) then
+		Screen.debugPrint(5, 160, "Install path: /Luma3DS.dat", colors.white, TOP_SCREEN)
     end
     Screen.debugPrint(5, 195, "Installed Updater: v."..sver, colors.white, TOP_SCREEN)
     Screen.debugPrint(5, 210, "Latest Updater   : v."..lver, colors.white, TOP_SCREEN)
@@ -396,7 +413,7 @@ while true do
 				elseif (curPos == 50) then
 					restoreBackup()
 				elseif (curPos == 65) then
-					if isMenuhax < 2 then
+					if isMenuhax < 3 then
 						isMenuhax = isMenuhax + 1
 					else
 						isMenuhax = 0
